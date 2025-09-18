@@ -1,0 +1,171 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+write_files:
+  # standard .bashrc
+- path: /etc/skel/.bashrc
+  content: |
+    # If not running interactively, don't do anything
+    case $- in
+        *i*) ;;
+          *) return;;
+    esac
+    # don't put duplicate lines or lines starting with space in the history.
+    HISTCONTROL=ignoreboth
+    # append to the history file, don't overwrite it
+    shopt -s histappend
+    # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+    HISTFILESIZE=999999
+    HISTSIZE=999999
+    # check the window size after each command, update LINES and COLUMNS if need
+    shopt -s checkwinsize
+    # set variable identifying the chroot you work in (used in the prompt below)
+    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+        debian_chroot=$(cat /etc/debian_chroot)
+    fi
+    # set a fancy prompt (non-color, unless we know we "want" color)
+    case "$TERM" in
+        xterm-color) color_prompt=yes;;
+    esac
+    force_color_prompt=yes
+    if [ -n "$force_color_prompt" ]; then
+        if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+            # We have color support; assume it's compliant with Ecma-48
+            # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+            # a case would tend to support setf rather than setaf.)
+            color_prompt=yes
+        else
+            color_prompt=
+        fi
+    fi
+    if [ "$color_prompt" = yes ]; then
+      PS1='\[\e[91;2m\]\u\[\e[93m\]@\[\e[96m\]\h\[\e[0m\] \[\e[93;2m\][\[\e[38;5;64;3m\]\w\[\e[23;93m\]]\n\[\e[33m\]\$\[\e[0m\] '
+    else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    fi
+    unset color_prompt force_color_prompt
+    # If this is an xterm set the title to user@host:dir
+    case "$TERM" in
+    xterm*|rxvt*)
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        ;;
+    *)
+        ;;
+    esac
+    # enable color support of ls and also add handy aliases
+    if [ -x /usr/bin/dircolors ]; then
+        test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+        alias ls='ls --color=auto'
+    fi
+    # enable programmable completion features
+    if ! shopt -oq posix; then
+      if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+      elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+      fi
+    fi
+
+  # rules for iptables-persistent
+- path: /etc/iptables/rules.v4
+  content: |
+    # iptables-persistent configuration for thr0ned/vadrigar
+    *filter
+
+    # Default policies
+    :INPUT DROP [0:0]
+    :FORWARD DROP [0:0]
+    :OUTPUT ACCEPT [0:0]
+
+    # Allow loopback (inter-process communication on 127.0.0.1 ports)
+    -A INPUT -i lo -j ACCEPT
+
+    # Allow established and related connections
+    -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+    # Allow SSH
+    -A INPUT -p tcp --dport 22 -j ACCEPT
+
+    # Allow remote connections to Redis database through :6379
+    -A INPUT -p tcp --dport 6379 -j ACCEPT
+
+    # Allow Quake Live UDP on :27960
+    -A INPUT -p udp --dport 27960 -j ACCEPT
+
+    # Optional: log dropped packets (comment out if noisy)
+    -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables-drop: " --log-level 4
+
+    # End of rules
+    COMMIT
+
+
+users:
+
+- name: sysadmin
+  gecos: "The system's super user."
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  ssh-authorized-keys:
+    - ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ssh public key for sysadmin
+
+- name: vadrigar
+  gecos: "The qlds host user."
+  sudo: ALL=(ALL) ALL
+  passwd: $6$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  shell: /bin/bash
+  ssh-authorized-keys:
+    - ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ssh public key for vadrigar
+
+
+# install tools and dependencies
+packages:
+- curl
+- procps
+- wget
+- gnupg
+- ca-certificates
+- lib32gcc-s1
+- tmux
+- python3
+- python3-dev
+- python3-pip
+- redis-server
+- git
+- build-essential
+- sshfs
+- iptables
+- iptables-persistent
+
+
+# final setup script
+runcmd:
+# enable redis
+- systemctl enable --now redis-server
+
+# python deps for minqlx
+- sudo -u vadrigar python3 -m pip install --user redis hiredis requests pyzmq --break-system-packages
+
+# fix sources.list
+- rm -f /etc/apt/sources.list.d/*
+- printf "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware\n" > /etc/apt/sources.list
+- dpkg --add-architecture i386
+- apt-get update
+
+# install steamcmd
+- sudo -u vadrigar mkdir -p /home/vadrigar/steamcmd
+- cd /home/vadrigar/steamcmd && sudo -u vadrigar wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+- cd /home/vadrigar/steamcmd && sudo -u vadrigar tar -xvzf steamcmd_linux.tar.gz && rm steamcmd_linux.tar.gz
+
+# install qlds
+- cd /home/vadrigar/steamcmd && sudo -u vadrigar /home/vadrigar/steamcmd/steamcmd.sh +force_install_dir /home/vadrigar/qlds/ +login anonymous +app_update 349090 +quit
+
+# pull and compile minqlx
+- cd /home/vadrigar && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx.git
+- cd /home/vadrigar/minqlx && sudo -u vadrigar make
+- cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/qlds/
+- rm -rf /home/vadrigar/minqlx
+
+# pull minqlx-plugins
+- cd /home/vadrigar/qlds && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx-plugins.git
+
