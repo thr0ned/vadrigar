@@ -3,295 +3,336 @@ package_update: true
 package_upgrade: true
 
 write_files:
+# final post-reboot script to check apt installation of docker ()
+  - path: /var/lib/cloud/scripts/per-instance/final-setup.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      apt-get install -y \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        docker-buildx-plugin \
+        docker-compose-plugin
+      usermod -aG docker vadrigar
+      rm -- "$0"
+
+
   # standard .bashrc
-- path: /etc/skel/.bashrc
-  content: |
-    # If not running interactively, don't do anything
-    case $- in
-        *i*) ;;
-          *) return;;
-    esac
-    # don't put duplicate lines or lines starting with space in the history.
-    HISTCONTROL=ignoreboth
-    # append to the history file, don't overwrite it
-    shopt -s histappend
-    # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-    HISTFILESIZE=999999
-    HISTSIZE=999999
-    # check the window size after each command, update LINES and COLUMNS if need
-    shopt -s checkwinsize
-    # set variable identifying the chroot you work in (used in the prompt below)
-    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-        debian_chroot=$(cat /etc/debian_chroot)
-    fi
-    # set a fancy prompt (non-color, unless we know we "want" color)
-    case "$TERM" in
-        xterm-color) color_prompt=yes;;
-    esac
-    force_color_prompt=yes
-    if [ -n "$force_color_prompt" ]; then
-        if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-            # We have color support; assume it's compliant with Ecma-48
-            # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-            # a case would tend to support setf rather than setaf.)
-            color_prompt=yes
-        else
-            color_prompt=
-        fi
-    fi
-    if [ "$color_prompt" = yes ]; then
-      PS1='\[\e[91;2m\]\u\[\e[93m\]@\[\e[96m\]\h\[\e[0m\] \[\e[93;2m\][\[\e[38;5;64;3m\]\w\[\e[23;93m\]]\n\[\e[33m\]\$\[\e[0m\] '
-    else
-        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-    fi
-    unset color_prompt force_color_prompt
-    # If this is an xterm set the title to user@host:dir
-    case "$TERM" in
-    xterm*|rxvt*)
-        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-        ;;
-    *)
-        ;;
-    esac
-    # enable color support of ls and also add handy aliases
-    if [ -x /usr/bin/dircolors ]; then
-        test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-        alias ls='ls --color=auto'
-    fi
-    # enable programmable completion features
-    if ! shopt -oq posix; then
-      if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion
-      elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion
+  - path: /etc/skel/.bashrc
+    content: |
+      # If not running interactively, don't do anything
+      case $- in
+          *i*) ;;
+            *) return;;
+      esac
+      # don't put duplicate lines or lines starting with space in the history.
+      HISTCONTROL=ignoreboth
+      # append to the history file, don't overwrite it
+      shopt -s histappend
+      # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+      HISTFILESIZE=999999
+      HISTSIZE=999999
+      # check the window size after each command, update LINES and COLUMNS if need
+      shopt -s checkwinsize
+      # set variable identifying the chroot you work in (used in the prompt below)
+      if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+          debian_chroot=$(cat /etc/debian_chroot)
       fi
-    fi
+      # set a fancy prompt (non-color, unless we know we "want" color)
+      case "$TERM" in
+          xterm-color) color_prompt=yes;;
+      esac
+      force_color_prompt=yes
+      if [ -n "$force_color_prompt" ]; then
+          if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+              # We have color support; assume it's compliant with Ecma-48
+              # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+              # a case would tend to support setf rather than setaf.)
+              color_prompt=yes
+          else
+              color_prompt=
+          fi
+      fi
+      if [ "$color_prompt" = yes ]; then
+        PS1='\[\e[91;2m\]\u\[\e[93m\]@\[\e[96m\]\h\[\e[0m\] \[\e[93;2m\][\[\e[38;5;64;3m\]\w\[\e[23;93m\]]\n\[\e[33m\]\$\[\e[0m\] '
+      else
+          PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+      fi
+      unset color_prompt force_color_prompt
+      # If this is an xterm set the title to user@host:dir
+      case "$TERM" in
+      xterm*|rxvt*)
+          PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+          ;;
+      *)
+          ;;
+      esac
+      # enable color support of ls and also add handy aliases
+      if [ -x /usr/bin/dircolors ]; then
+          test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+          alias ls='ls --color=auto'
+      fi
+      # enable programmable completion features
+      if ! shopt -oq posix; then
+        if [ -f /usr/share/bash-completion/bash_completion ]; then
+          . /usr/share/bash-completion/bash_completion
+        elif [ -f /etc/bash_completion ]; then
+          . /etc/bash_completion
+        fi
+      fi
 
-  # rules for iptables-persistent
-- path: /etc/iptables/rules.v4
-  content: |
-    # iptables-persistent configuration for thr0ned/vadrigar
-    *filter
+    # rules for iptables-persistent
+  - path: /etc/iptables/rules.v4
+    content: |
+      # iptables-persistent configuration for thr0ned/vadrigar
+      *filter
 
-    # Default policies
-    :INPUT DROP [0:0]
-    :FORWARD DROP [0:0]
-    :OUTPUT ACCEPT [0:0]
+      # Default policies
+      :INPUT DROP [0:0]
+      :FORWARD DROP [0:0]
+      :OUTPUT ACCEPT [0:0]
 
-    # Allow loopback (inter-process communication on 127.0.0.1 ports)
-    -A INPUT -i lo -j ACCEPT
+      # Allow loopback (inter-process communication on 127.0.0.1 ports)
+      -A INPUT -i lo -j ACCEPT
 
-    # Allow established and related connections
-    -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      # Allow established and related connections
+      -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-    # Allow SSH
-    -A INPUT -p tcp --dport 7022 -j ACCEPT
+      # Allow SSH
+      -A INPUT -p tcp --dport 7022 -j ACCEPT
 
-    # Allow remote connections to Redis database through :6379
-    -A INPUT -p tcp --dport 6379 -j ACCEPT
+      # Allow remote connections to Redis database through :6379
+      -A INPUT -p tcp --dport 6379 -j ACCEPT
 
-    # Allow Quake Live UDP on :27960
-    -A INPUT -p udp --dport 27960 -j ACCEPT
+      # Allow Quake Live UDP on :27960
+      -A INPUT -p udp --dport 27960 -j ACCEPT
 
-    # Optional: log dropped packets (comment out if noisy)
-    -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables-drop: " --log-level 4
+      # Optional: log dropped packets (comment out if noisy)
+      -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables-drop: " --log-level 4
 
-    # End of rules
-    COMMIT
+      # End of rules
+      COMMIT
 
-- path: /etc/ssh/sshd_config
-  content: |
-    PermitRootLogin no
+  # config for sshd listening service. set port to 7022 to recude exposure to bots
+  - path: /etc/ssh/sshd_config
+    content: |
+      PermitRootLogin no
 
 
-    # This is the sshd server system-wide configuration file.  See
-    # sshd_config(5) for more information.
+      # This is the sshd server system-wide configuration file.  See
+      # sshd_config(5) for more information.
 
-    # This sshd was compiled with PATH=/usr/local/bin:/usr/bin:/bin:/usr/games
+      # This sshd was compiled with PATH=/usr/local/bin:/usr/bin:/bin:/usr/games
 
-    # The strategy used for options in the default sshd_config shipped with
-    # OpenSSH is to specify options with their default value where
-    # possible, but leave them commented.  Uncommented options override the
-    # default value.
+      # The strategy used for options in the default sshd_config shipped with
+      # OpenSSH is to specify options with their default value where
+      # possible, but leave them commented.  Uncommented options override the
+      # default value.
 
-    Include /etc/ssh/sshd_config.d/*.conf
+      Include /etc/ssh/sshd_config.d/*.conf
 
-    Port 7022
-    #AddressFamily any
-    #ListenAddress 0.0.0.0
-    #ListenAddress ::
+      Port 7022
+      #AddressFamily any
+      #ListenAddress 0.0.0.0
+      #ListenAddress ::
 
-    #HostKey /etc/ssh/ssh_host_rsa_key
-    #HostKey /etc/ssh/ssh_host_ecdsa_key
-    #HostKey /etc/ssh/ssh_host_ed25519_key
+      #HostKey /etc/ssh/ssh_host_rsa_key
+      #HostKey /etc/ssh/ssh_host_ecdsa_key
+      #HostKey /etc/ssh/ssh_host_ed25519_key
 
-    # Ciphers and keying
-    #RekeyLimit default none
+      # Ciphers and keying
+      #RekeyLimit default none
 
-    # Logging
-    #SyslogFacility AUTH
-    #LogLevel INFO
+      # Logging
+      #SyslogFacility AUTH
+      #LogLevel INFO
 
-    # Authentication:
+      # Authentication:
 
-    #LoginGraceTime 2m
-    #PermitRootLogin yes
-    #StrictModes yes
-    #MaxAuthTries 6
-    #MaxSessions 10
+      #LoginGraceTime 2m
+      #PermitRootLogin yes
+      #StrictModes yes
+      #MaxAuthTries 6
+      #MaxSessions 10
 
-    #PubkeyAuthentication yes
+      #PubkeyAuthentication yes
 
-    # Expect .ssh/authorized_keys2 to be disregarded by default in future.
-    #AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
+      # Expect .ssh/authorized_keys2 to be disregarded by default in future.
+      #AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
 
-    #AuthorizedPrincipalsFile none
+      #AuthorizedPrincipalsFile none
 
-    #AuthorizedKeysCommand none
-    #AuthorizedKeysCommandUser nobody
+      #AuthorizedKeysCommand none
+      #AuthorizedKeysCommandUser nobody
 
-    # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
-    #HostbasedAuthentication no
-    # Change to yes if you don't trust ~/.ssh/known_hosts for
-    # HostbasedAuthentication
-    #IgnoreUserKnownHosts no
-    # Don't read the user's ~/.rhosts and ~/.shosts files
-    #IgnoreRhosts yes
+      # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+      #HostbasedAuthentication no
+      # Change to yes if you don't trust ~/.ssh/known_hosts for
+      # HostbasedAuthentication
+      #IgnoreUserKnownHosts no
+      # Don't read the user's ~/.rhosts and ~/.shosts files
+      #IgnoreRhosts yes
 
-    # To disable tunneled clear text passwords, change to no here!
-    #PasswordAuthentication yes
-    #PermitEmptyPasswords no
+      # To disable tunneled clear text passwords, change to no here!
+      #PasswordAuthentication yes
+      #PermitEmptyPasswords no
 
-    # Change to yes to enable challenge-response passwords (beware issues with
-    # some PAM modules and threads)
-    KbdInteractiveAuthentication no
+      # Change to yes to enable challenge-response passwords (beware issues with
+      # some PAM modules and threads)
+      KbdInteractiveAuthentication no
 
-    # Kerberos options
-    #KerberosAuthentication no
-    #KerberosOrLocalPasswd yes
-    #KerberosTicketCleanup yes
-    #KerberosGetAFSToken no
+      # Kerberos options
+      #KerberosAuthentication no
+      #KerberosOrLocalPasswd yes
+      #KerberosTicketCleanup yes
+      #KerberosGetAFSToken no
 
-    # GSSAPI options
-    #GSSAPIAuthentication no
-    #GSSAPICleanupCredentials yes
-    #GSSAPIStrictAcceptorCheck yes
-    #GSSAPIKeyExchange no
+      # GSSAPI options
+      #GSSAPIAuthentication no
+      #GSSAPICleanupCredentials yes
+      #GSSAPIStrictAcceptorCheck yes
+      #GSSAPIKeyExchange no
 
-    # Set this to 'yes' to enable PAM authentication, account processing,
-    # and session processing. If this is enabled, PAM authentication will
-    # be allowed through the KbdInteractiveAuthentication and
-    # PasswordAuthentication.  Depending on your PAM configuration,
-    # PAM authentication via KbdInteractiveAuthentication may bypass
-    # the setting of "PermitRootLogin prohibit-password".
-    # If you just want the PAM account and session checks to run without
-    # PAM authentication, then enable this but set PasswordAuthentication
-    # and KbdInteractiveAuthentication to 'no'.
-    UsePAM yes
+      # Set this to 'yes' to enable PAM authentication, account processing,
+      # and session processing. If this is enabled, PAM authentication will
+      # be allowed through the KbdInteractiveAuthentication and
+      # PasswordAuthentication.  Depending on your PAM configuration,
+      # PAM authentication via KbdInteractiveAuthentication may bypass
+      # the setting of "PermitRootLogin prohibit-password".
+      # If you just want the PAM account and session checks to run without
+      # PAM authentication, then enable this but set PasswordAuthentication
+      # and KbdInteractiveAuthentication to 'no'.
+      UsePAM yes
 
-    #AllowAgentForwarding yes
-    #AllowTcpForwarding yes
-    #GatewayPorts no
-    X11Forwarding yes
-    #X11DisplayOffset 10
-    #X11UseLocalhost yes
-    #PermitTTY yes
-    PrintMotd no
-    #PrintLastLog yes
-    #TCPKeepAlive yes
-    #PermitUserEnvironment no
-    #Compression delayed
-    #ClientAliveInterval 0
-    #ClientAliveCountMax 3
-    #UseDNS no
-    #PidFile /run/sshd.pid
-    #MaxStartups 10:30:100
-    #PermitTunnel no
-    #ChrootDirectory none
-    #VersionAddendum none
+      #AllowAgentForwarding yes
+      #AllowTcpForwarding yes
+      #GatewayPorts no
+      X11Forwarding yes
+      #X11DisplayOffset 10
+      #X11UseLocalhost yes
+      #PermitTTY yes
+      PrintMotd no
+      #PrintLastLog yes
+      #TCPKeepAlive yes
+      #PermitUserEnvironment no
+      #Compression delayed
+      #ClientAliveInterval 0
+      #ClientAliveCountMax 3
+      #UseDNS no
+      #PidFile /run/sshd.pid
+      #MaxStartups 10:30:100
+      #PermitTunnel no
+      #ChrootDirectory none
+      #VersionAddendum none
 
-    # no default banner path
-    #Banner none
+      # no default banner path
+      #Banner none
 
-    # Allow client to pass locale environment variables
-    AcceptEnv LANG LC_*
+      # Allow client to pass locale environment variables
+      AcceptEnv LANG LC_*
 
-    # override default of no subsystems
-    Subsystem       sftp    /usr/lib/openssh/sftp-server
+      # override default of no subsystems
+      Subsystem       sftp    /usr/lib/openssh/sftp-server
 
-    # Example of overriding settings on a per-user basis
-    #Match User anoncvs
-    #       X11Forwarding no
-    #       AllowTcpForwarding no
-    #       PermitTTY no
-    #       ForceCommand cvs server
+      # Example of overriding settings on a per-user basis
+      #Match User anoncvs
+      #       X11Forwarding no
+      #       AllowTcpForwarding no
+      #       PermitTTY no
+      #       ForceCommand cvs server
 
 
 users:
-- name: sysadmin
-  gecos: "The system's super user."
-  sudo: ALL=(ALL) NOPASSWD:ALL
-  shell: /bin/bash
-  ssh-authorized-keys:
-    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJUl9T4xRM5Ge4ErZ0V3f2QDVqhgZq7+umfa3pCTT2Mv vultr ssh key for sysadmin
+  - name: sysadmin
+    gecos: "The system's super user."
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJUl9T4xRM5Ge4ErZ0V3f2QDVqhgZq7+umfa3pCTT2Mv vultr ssh key for sysadmin
 
-- name: vadrigar
-  gecos: "The qlds host user."
-  sudo: ALL=(ALL) ALL
-  passwd: $6$XpTEzyApsYV3JRiI$yj0HUslGupp7XLR4YQnbOwhKUWFl3R08ruPo.2V7sqpp5J2yWotz.qKG0jQJV5osbzZC3MPLFtxM3YLR4KCxt.
-  shell: /bin/bash
-  ssh-authorized-keys:
-    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtatF2mQxb0R0ZsDVd2iqnp8OkaU9oXrMcMWFAyfacf vultr ssh key for vadrigar
+  - name: vadrigar
+    gecos: "The qlds host user."
+    sudo: ALL=(ALL) ALL
+    passwd: $6$u25aUGfmx0T1gpqI$JVkAyhjjuL2T1J/LXJeIfRfZ.tDZl4Jl.dP1BFCO1nJu/c/zK96EGVUhNE0e1BgJWMDIHQ5z6w55/Z4DaXumM1
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtatF2mQxb0R0ZsDVd2iqnp8OkaU9oXrMcMWFAyfacf vultr ssh key for vadrigar
+
+ssh_pwauth: false   # disables password login for SSH globally
 
 
-# install tools and dependencies
 packages:
-- curl
-- procps
-- wget
-- gnupg
-- ca-certificates
-- lib32gcc-s1
-- tmux
-- python3
-- python3-dev
-- python3-pip
-- redis-server
-- git
-- build-essential
-- sshfs
-- iptables
-- iptables-persistent
+  - curl
+  - procps
+  - wget
+  - gnupg
+  - ca-certificates
+  - lib32gcc-s1
+  - tmux
+  - python3
+  - python3-dev
+  - python3-pip
+  - redis-server
+  - git
+  - build-essential
+  - sshfs
+  - iptables
+  - iptables-persistent
 
 
-# final setup script
 runcmd:
-# enable redis
-- systemctl enable --now redis-server
+  # enable iptables-persistent service
+  - systemctl enable --now netfilter-persistent
 
-# python deps for minqlx
-- sudo -u vadrigar python3 -m pip install --user redis hiredis requests pyzmq --break-system-packages
+  # enable redis
+  - systemctl enable --now redis-server
 
-# fix sources.list
-- rm -f /etc/apt/sources.list.d/*
-- printf "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware\n" > /etc/apt/sources.list
-- dpkg --add-architecture i386
-- apt-get update
+  # python deps for minqlx
+  - sudo -u vadrigar python3 -m pip install --user redis hiredis requests pyzmq --break-system-packages
 
-# install steamcmd
-- sudo -u vadrigar mkdir -p /home/vadrigar/steamcmd
-- cd /home/vadrigar/steamcmd && sudo -u vadrigar wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
-- cd /home/vadrigar/steamcmd && sudo -u vadrigar tar -xvzf steamcmd_linux.tar.gz && rm steamcmd_linux.tar.gz
+  # fix sources.list
+  - rm -f /etc/apt/sources.list.d/*
+  - printf "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware\n" > /etc/apt/sources.list
+  - dpkg --add-architecture i386
+  - apt-get update
 
-# install qlds
-- cd /home/vadrigar/steamcmd && sudo -u vadrigar /home/vadrigar/steamcmd/steamcmd.sh +force_install_dir /home/vadrigar/qlds/ +login anonymous +app_update 349090 +quit
+  # install steamcmd
+  - sudo -u vadrigar mkdir -p /home/vadrigar/steamcmd
+  - cd /home/vadrigar/steamcmd && sudo -u vadrigar wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+  - cd /home/vadrigar/steamcmd && sudo -u vadrigar tar -xvzf steamcmd_linux.tar.gz && rm steamcmd_linux.tar.gz
 
-# pull and compile minqlx
-- cd /home/vadrigar && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx.git
-- cd /home/vadrigar/minqlx && sudo -u vadrigar make
-- cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/qlds/
-- rm -rf /home/vadrigar/minqlx
+  # install qlds
+  - cd /home/vadrigar/steamcmd && sudo -u vadrigar /home/vadrigar/steamcmd/steamcmd.sh +force_install_dir /home/vadrigar/qlds/ +login anonymous +app_update 349090 +quit
 
-# pull minqlx-plugins
-- cd /home/vadrigar/qlds && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx-plugins.git
+  # pull and compile minqlx
+  - cd /home/vadrigar && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx.git
+  - cd /home/vadrigar/minqlx && sudo -u vadrigar make
+  - cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/qlds/
+  - rm -rf /home/vadrigar/minqlx
 
+  # pull minqlx-plugins
+  - cd /home/vadrigar/qlds && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx-plugins.git
+
+  # install docker-compose
+  # Install Docker & Docker Compose
+  - |
+    # create keyrings dir
+    install -m 0755 -d /etc/apt/keyrings
+
+    # download Docker GPG key
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+
+    # add Docker repo
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+    https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    > /etc/apt/sources.list.d/docker.list
+
+    # update package index
+    apt-get update
+
+    # install Docker engine & Compose plugin
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+  - sudo reboot
