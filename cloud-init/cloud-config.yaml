@@ -8,6 +8,9 @@ write_files:
     permissions: '0755'
     content: |
       #!/bin/bash
+
+      getent group docker || groupadd docker
+
       apt-get install -y \
         docker-ce \
         docker-ce-cli \
@@ -249,7 +252,7 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     ssh-authorized-keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJUl9T4xRM5Ge4ErZ0V3f2QDVqhgZq7+umfa3pCTT2Mv vultr ssh key for sysadmin
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAjsvrL/kiSWADnPfky10EwOXHAULnbAYoKOfF3D4ASb ssh public key for sysadmin
 
   - name: vadrigar
     gecos: "The qlds host user."
@@ -257,7 +260,7 @@ users:
     passwd: $6$u25aUGfmx0T1gpqI$JVkAyhjjuL2T1J/LXJeIfRfZ.tDZl4Jl.dP1BFCO1nJu/c/zK96EGVUhNE0e1BgJWMDIHQ5z6w55/Z4DaXumM1
     shell: /bin/bash
     ssh-authorized-keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtatF2mQxb0R0ZsDVd2iqnp8OkaU9oXrMcMWFAyfacf vultr ssh key for vadrigar
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFqINU/z61vbsrGLaZWTgo8VD/KX81toE0ZajbOTFMkC ssh public key for vadrigar
 
 ssh_pwauth: false   # disables password login for SSH globally
 
