@@ -293,50 +293,87 @@ runcmd:
   # - systemctl enable --now redis-server
 
   # python deps for minqlx
-  - sudo -u vadrigar python3 -m pip install --user redis hiredis requests pyzmq --break-system-packages
-
-  # fix sources.list
-  - rm -f /etc/apt/sources.list.d/*
-  - printf "deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware\n" > /etc/apt/sources.list
-  - dpkg --add-architecture i386
-  - apt-get update
+  - |
+    sudo -u vadrigar                                                           \
+        python3 -m                                                             \
+          pip install --user                                                   \
+            redis                                                              \
+            hiredis                                                            \
+            requests                                                           \
+            pyzmq                                                              \
+          --break-system-packages
 
   # install steamcmd
-  - sudo -u vadrigar mkdir -p /home/vadrigar/steamcmd
-  - cd /home/vadrigar/steamcmd && sudo -u vadrigar wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
-  - cd /home/vadrigar/steamcmd && sudo -u vadrigar tar -xvzf steamcmd_linux.tar.gz && rm steamcmd_linux.tar.gz
-
-  # install qlds
-  - cd /home/vadrigar/steamcmd && sudo -u vadrigar /home/vadrigar/steamcmd/steamcmd.sh +force_install_dir /home/vadrigar/qlds/ +login anonymous +app_update 349090 +quit
-
-  # pull and compile minqlx
-  - cd /home/vadrigar && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx.git
-  - cd /home/vadrigar/minqlx && sudo -u vadrigar make
-  - cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/qlds/
-  - rm -rf /home/vadrigar/minqlx
-
-  # pull minqlx-plugins
-  - cd /home/vadrigar/qlds && sudo -u vadrigar git clone https://github.com/MinoMino/minqlx-plugins.git
-
-  # install docker-compose
-  # Install Docker & Docker Compose
   - |
-    # create keyrings dir
-    install -m 0755 -d /etc/apt/keyrings
-
-    # download Docker GPG key
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    chmod a+r /etc/apt/keyrings/docker.gpg
-
-    # add Docker repo
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-    https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
-    > /etc/apt/sources.list.d/docker.list
-
-    # update package index
+    rm -f /etc/apt/sources.list.d/*
+    printf "deb http://deb.debian.org/debian                                   \
+                  bookworm                                                     \
+                  main                                                         \
+                  contrib                                                      \
+                  non-free                                                     \
+                  non-free-firmware\n"                                         \
+      > /etc/apt/sources.list
+    dpkg --add-architecture i386
     apt-get update
 
-    # install Docker engine & Compose plugin
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo -u vadrigar                                                           \
+        mkdir -p /home/vadrigar/steamcmd                                       \
+    &&  cd /home/vadrigar/steamcmd                                             \
+    &&  wget                                                                   \
+        https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+    &&  tar -xvzf steamcmd_linux.tar.gz                                        \
+    &&  rm steamcmd_linux.tar.gz
+
+  # install qlds
+  - |
+    cd /home/vadrigar/steamcmd
+    sudo -u vadrigar                                                           \
+        /home/vadrigar/steamcmd/steamcmd.sh                                    \
+            +force_install_dir /home/vadrigar/qlds/                            \
+            +login             anonymous                                       \
+            +app_update        349090                                          \
+            +quit
+
+  # pull and compile minqlx
+  - |
+    sudo -u vadrigar                                                           \
+        cd /home/vadrigar                                                      \
+    &&  git clone https://github.com/MinoMino/minqlx.git                       \
+    &&  cd /home/vadrigar/minqlx                                               \
+    &&  make                                                                   \
+    &&  cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/qlds/                 \
+    &&  rm -rf /home/vadrigar/minqlx
+
+
+  # pull minqlx-plugins
+  - |
+    sudo -u vadrigar                                                           \
+        cd  /home/vadrigar/qlds |                                              \
+    &&  git clone https://github.com/MinoMino/minqlx-plugins.git
+
+  # install docker & docker compose
+  - |
+    install -m 0755 -d /etc/apt/keyrings
+
+    curl -fsSL                                                                 \
+      https://download.docker.com/linux/debian/gpg                             \
+      | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture)                               \
+          signed-by=/etc/apt/keyrings/docker.gpg]                              \
+          https://download.docker.com/linux/debian                             \
+          $(. /etc/os-release && echo "$VERSION_CODENAME")                     \
+          stable                                                               \
+      " > /etc/apt/sources.list.d/docker.list
+
+    apt-get update
+
+    apt-get install -y                                                         \
+      docker-ce                                                                \
+      docker-ce-cli                                                            \
+      containerd.io                                                            \
+      docker-buildx-plugin                                                     \
+      docker-compose-plugin
 
   - sudo reboot
