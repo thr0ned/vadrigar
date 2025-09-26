@@ -109,10 +109,11 @@ write_files:
       -A INPUT -p tcp --dport 7022 -j ACCEPT
 
       # Allow remote connections to Redis database through :6379
-      -A INPUT -p tcp --dport 6379 -j ACCEPT
+      # -A INPUT -p tcp --dport 6379 -j ACCEPT
 
-      # Allow Quake Live UDP on :27960
+      # Allow Quake Live UDP/TCP on :27960
       -A INPUT -p udp --dport 27960 -j ACCEPT
+      -A INPUT -p tcp --dport 27960 -j ACCEPT
 
       # Optional: log dropped packets (comment out if noisy)
       -A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables-drop: " --log-level 4
