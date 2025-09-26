@@ -256,7 +256,7 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     ssh-authorized-keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAjsvrL/kiSWADnPfky10EwOXHAULnbAYoKOfF3D4ASb ssh public key for sysadmin
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK9dRHySPSqIEGVNzaz4os0i3vf3LQMv08LjNFDp2fPO ssh public key for sysadmin
 
   - name: vadrigar
     gecos: "The qlds host user."
@@ -264,7 +264,8 @@ users:
     passwd: $6$u25aUGfmx0T1gpqI$JVkAyhjjuL2T1J/LXJeIfRfZ.tDZl4Jl.dP1BFCO1nJu/c/zK96EGVUhNE0e1BgJWMDIHQ5z6w55/Z4DaXumM1
     shell: /bin/bash
     ssh-authorized-keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFqINU/z61vbsrGLaZWTgo8VD/KX81toE0ZajbOTFMkC ssh public key for vadrigar
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDW5Up422Qjjua4WR+hALEx1iNO8+apyB05beLSUTNpd ssh public key for vadrigar
+
 
 
 packages:
