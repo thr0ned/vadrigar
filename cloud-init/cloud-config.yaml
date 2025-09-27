@@ -256,14 +256,14 @@ users:
     sudo: "ALL=(ALL) NOPASSWD:ALL"
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK9dRHySPSqIEGVNzaz4os0i3vf3LQMv08LjNFDp2fPO ssh public key for sysadmin
+      - ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ssh public key for sysadmin
 
   - name: vadrigar
     gecos: "The qlds host user."
     sudo: "ALL=(ALL) ALL"
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDW5Up422Qjjua4WR+hALEx1iNO8+apyB05beLSUTNpd ssh public key for vadrigar
+      - ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ssh public key for vadrigar
 
 packages:
   - curl
@@ -288,7 +288,7 @@ runcmd:
   # enable iptables-persistent service
   - systemctl enable --now netfilter-persistent
 
-  # enable redis
+  # enable redis (we are using docker now)
   # - systemctl enable --now redis-server
 
   # python deps for minqlx
