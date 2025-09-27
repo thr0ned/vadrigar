@@ -1,12 +1,1 @@
-scripts/ssh-keys/
-scripts/settings.env
-
-docker/volumes/qlds/baseq3/*
-!docker/volumes/qlds/baseq3/
-!docker/volumes/qlds/baseq3/scripts/
-docker/volumes/qlds/baseq3/scripts/*
-docker/volumes/data/*
-!docker/volumes/data/
-!docker/volumes/data/qlhomepath/
-docker/volumes/data/qlhomepath/*
-docker/volumes/
+scripts/ssh-keys/*
