@@ -253,20 +253,17 @@ write_files:
 users:
   - name: sysadmin
     gecos: "The system's super user."
-    sudo: ALL=(ALL) NOPASSWD:ALL
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
     shell: /bin/bash
-    ssh-authorized-keys:
+    ssh_authorized_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK9dRHySPSqIEGVNzaz4os0i3vf3LQMv08LjNFDp2fPO ssh public key for sysadmin
 
   - name: vadrigar
     gecos: "The qlds host user."
-    sudo: ALL=(ALL) ALL
-    passwd: $6$u25aUGfmx0T1gpqI$JVkAyhjjuL2T1J/LXJeIfRfZ.tDZl4Jl.dP1BFCO1nJu/c/zK96EGVUhNE0e1BgJWMDIHQ5z6w55/Z4DaXumM1
+    sudo: "ALL=(ALL) ALL"
     shell: /bin/bash
-    ssh-authorized-keys:
+    ssh_authorized_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDW5Up422Qjjua4WR+hALEx1iNO8+apyB05beLSUTNpd ssh public key for vadrigar
-
-
 
 packages:
   - curl
@@ -318,40 +315,36 @@ runcmd:
     dpkg --add-architecture i386
     apt-get update
 
-    sudo -u vadrigar                                                           \
-        mkdir -p /home/vadrigar/steamcmd                                       \
+    sudo -u vadrigar mkdir -p /home/vadrigar/steamcmd                          \
     &&  cd /home/vadrigar/steamcmd                                             \
-    &&  wget                                                                   \
-        https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+    &&  wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
     &&  tar -xvzf steamcmd_linux.tar.gz                                        \
     &&  rm steamcmd_linux.tar.gz
 
-  # install qlds
   - |
-    cd /home/vadrigar/steamcmd
-    sudo -u vadrigar                                                           \
-        /home/vadrigar/steamcmd/steamcmd.sh                                    \
-            +force_install_dir /home/vadrigar/qlds/                            \
+    mkdir -p /home/vadrigar/server/volumes/qlds/
+    sudo chown -R vadrigar:vadrigar /home/vadrigar
+    sudo -u vadrigar /home/vadrigar/steamcmd/steamcmd.sh                       \
+            +force_install_dir /home/vadrigar/server/volumes/qlds             \
             +login             anonymous                                       \
             +app_update        349090                                          \
             +quit
 
   # pull and compile minqlx
   - |
-    sudo -u vadrigar                                                           \
-        cd /home/vadrigar                                                      \
-    &&  git clone https://github.com/MinoMino/minqlx.git                       \
+    cd /home/vadrigar
+    sudo -u vadrigar git clone https://github.com/MinoMino/minqlx.git          \
     &&  cd /home/vadrigar/minqlx                                               \
     &&  make                                                                   \
-    &&  cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/qlds/                 \
+    &&  cp -r /home/vadrigar/minqlx/bin/* /home/vadrigar/server/volumes/qlds/  \
+    &&  cd /home/vadrigar                                                      \
     &&  rm -rf /home/vadrigar/minqlx
 
 
   # pull minqlx-plugins
   - |
-    sudo -u vadrigar                                                           \
-        cd  /home/vadrigar/qlds |                                              \
-    &&  git clone https://github.com/MinoMino/minqlx-plugins.git
+    cd /home/vadrigar/server/volumes/qlds/
+    sudo -u vadrigar git clone https://github.com/MinoMino/minqlx-plugins.git
 
   # install docker & docker compose
   - |
