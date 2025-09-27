@@ -13,7 +13,7 @@ tee > ~/.ssh/hosts.d/sysadmin-hostinfo.conf << END
 Host sysadmin
     HostName ${REMOTE_IP}
     User sysadmin
-    Port 7022
+    Port 22
     IdentityFile ${BASE_DIR}/ssh-keys/sysadmin
 END
 
@@ -22,7 +22,7 @@ tee > ~/.ssh/hosts.d/vadrigar-hostinfo.conf << END
 Host vadrigar
     HostName ${REMOTE_IP}
     User vadrigar
-    Port 7022
+    Port 22
     IdentityFile ${BASE_DIR}/ssh-keys/vadrigar
 END
 
