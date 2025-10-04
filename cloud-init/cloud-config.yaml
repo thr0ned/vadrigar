@@ -256,14 +256,14 @@ users:
     sudo: "ALL=(ALL) NOPASSWD:ALL"
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIUlhMHM+zpyGtx7HOoIdfUr9fgSAiwGTd99op30EltG ssh public key for sysadmin
+      - ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ssh public key for sysadmin
 
   - name: vadrigar
     gecos: "The qlds host user."
     sudo: "ALL=(ALL) ALL"
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJMm+GkIzioFZ29VTjIPZTpEwQ/Hh3J9PKgbANHkL4NN ssh public key for vadrigar
+      - ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ssh public key for vadrigar
 
 packages:
   - curl
@@ -371,5 +371,7 @@ runcmd:
       containerd.io                                                            \
       docker-buildx-plugin                                                     \
       docker-compose-plugin
+
+  - chown -R vadrigar:vadrigar /home/vadrigar/
 
   - sudo reboot
