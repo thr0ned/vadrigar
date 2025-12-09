@@ -62,9 +62,11 @@ git clone https://github.com/thr0ned/vadrigar.git && cd vadrigar
 ```
 Then run the installer script:
 ```bash
+# Set execute permission
+chmod +x ./setup/debian-installer.sh
 ./setup/debian-installer.sh
 ```
-This will 
+
 
 
 
