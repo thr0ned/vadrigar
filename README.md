@@ -66,11 +66,11 @@ Run the installer script. You'll need to provide the sudo password you set befor
 chmod +x ./setup/debian-installer.sh
 ./setup/debian-installer.sh
 ```
-Now exit out back to PowerShell:"
+Now exit out back to PowerShell:
 ```bash
 exit
 ```
-Kill and restart WSL:"
+Kill and restart WSL:
 ```powershell
 wsl --shutdown
 wsl.exe --distribution Debian
