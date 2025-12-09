@@ -43,6 +43,16 @@ echo "Adding user '$DOCKER_USER' to docker group…"
 sudo usermod -aG docker "$DOCKER_USER"
 
 echo
-echo "✔ Docker installation complete!"
-echo "➡ Close and reopen your WSL terminal (or run: wsl --shutdown)"
-echo "   then test with:  docker run hello-world"
+echo
+echo "docker + compose installation complete!"
+echo
+echo "Now exit back to powershell by running:"
+echo "    $ exit"
+echo
+echo "Then, in powershell, kill wsl by running:"
+echo "    wsl --shutdown)"
+echo "And launch it again:"
+echo "    wsl.exe --distribution Debian"
+echo "then test with:  docker run hello-world"
+echo
+echo
