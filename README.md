@@ -60,26 +60,22 @@ sudo apt update && sudo apt upgrade
 sudo apt install git
 git clone https://github.com/thr0ned/vadrigar.git && cd vadrigar
 ```
-Then run the installer script. You'll need to provide the sudo password you set before.
+Run the installer script. You'll need to provide the sudo password you set before.
 ```bash
 # Set execute permission
 chmod +x ./setup/debian-installer.sh
 ./setup/debian-installer.sh
 ```
-Now exit out back to powershell:"
+Now exit out back to PowerShell:"
 ```bash
 exit
 ```
-Then in powershell, kill WSL by running:"
+Kill and restart WSL:"
 ```powershell
 wsl --shutdown
-```
-And launch it again...
-```powershell
 wsl.exe --distribution Debian
 ```
-Test by running:
+Test docker by running:
 ```bash
 docker run hello-world
 ```
-
