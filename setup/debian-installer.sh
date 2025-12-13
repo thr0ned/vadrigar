@@ -52,6 +52,6 @@ echo "    $ exit"
 echo "Then, in powershell, kill wsl by running:"
 echo "    wsl --shutdown"
 echo "And launch it again:"
-echo "    wsl.exe --distribution Debian"
+echo "    wsl --distribution Debian"
 echo "then test with:  docker run hello-world"
 echo
