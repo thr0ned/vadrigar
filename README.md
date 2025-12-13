@@ -56,8 +56,8 @@ Update system with the apt package manager, install git and clone this repositor
 ```bash
 # Go to the home directory first, WSL spawns us in the mounted windows filesystem
 cd ~
-sudo apt update && sudo apt upgrade
-sudo apt install git
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install -y git
 git clone https://github.com/thr0ned/vadrigar.git && cd vadrigar
 ```
 Run the installer script to set up docker/compose. You'll need to provide the sudo password you set before.
@@ -66,16 +66,8 @@ Run the installer script to set up docker/compose. You'll need to provide the su
 chmod +x ./setup/debian-installer.sh
 ./setup/debian-installer.sh
 ```
-Now exit out back to PowerShell:
-```bash
-exit
-```
-Kill and restart WSL:
+Now exit out back to PowerShell with `exit`, then kill and restart WSL:
 ```powershell
 wsl --shutdown
 wsl.exe --distribution Debian
-```
-Test docker by running:
-```bash
-docker run hello-world
 ```
