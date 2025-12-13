@@ -38,11 +38,13 @@ RUN mkdir -p /steamcmd                                                         \
 &&  wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\
 &&  tar -xvzf steamcmd_linux.tar.gz                                            \
 &&  rm steamcmd_linux.tar.gz                                                   \
-&&  /steamcmd/steamcmd.sh                                                      \
+&&  /steamcmd/steamcmd.sh +quit +login anonymous
+
+RUN /steamcmd/steamcmd.sh                                                      \
         +force_install_dir /qlds/                                              \
         +login anonymous                                                       \
         +app_update 349090                                                     \
-        +quit 
+        +quit
 
 RUN git clone https://github.com/MinoMino/minqlx.git                           \
 &&  cd /minqlx                                                                 \
