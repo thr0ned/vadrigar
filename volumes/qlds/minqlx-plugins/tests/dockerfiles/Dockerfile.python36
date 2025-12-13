@@ -1,0 +1,13 @@
+FROM python:3.6-bullseye
+
+RUN apt-get update && apt-get install -y redis
+RUN python3 -m pip install mockito coverage
+
+COPY . /opt/minqlx-plugins
+WORKDIR /opt/minqlx-plugins
+
+ARG FORCE_REDIS_PACKAGE_VERSION
+RUN if [ "$FORCE_REDIS_PACKAGE_VERSION" ] ; then python3 -m pip install redis"$FORCE_REDIS_PACKAGE_VERSION" ; fi
+
+RUN python3 -m pip install -r requirements.txt
+CMD ["./tests/dockerfiles/entrypoint.sh"]

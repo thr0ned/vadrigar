@@ -1,0 +1,157 @@
+# specify 1 workshop item id per line, ex:
+
+# CPMA Fullbright Skins
+2955830332
+# serpent's lair (another overkill remix)
+3463480024
+# flyonrocket2
+2790708234
+# vrmdmm4
+3417135497
+
+# 494372396
+# 441344649
+# Overchad, the best charly map ever created
+1317503170
+# 6plus
+547252823
+# ts_ca1
+597920398
+# oplus
+1752943955
+# overek
+1608253886
+# okremix
+549600167
+# Simple brushes
+726134197
+# q3shw23 - Hipertrofia
+1706281871
+# Rage against Mankind
+1095052281
+# Colorphobia
+1706273522
+# proverek2
+1788666539
+# Stormatorium
+1581073000
+# ra3map1
+1804571305
+# ra3map9
+1804815655
+# ra3map16
+1804939744
+# Sanctorium
+552722973
+# psidm7 - cynosure
+1706158299
+# cpm8
+624478556
+# ca_tamb
+597914676
+# mozer
+1610009832
+# de_dust2
+1502166021
+# Campgrounds Redux [Q4DM9]
+1928235486
+# ospdm7
+575312620
+# ts_dm5
+563105825
+# mozer
+1610009832
+# colors
+1934047910
+# ra3mp8
+1106985970
+# ra3void1e
+1108844724
+# fragaholic
+1863507463
+# overkeel
+1935100656
+# firstrebirth
+1971145850
+# hidden fortress remix aka Fortress 2089
+632254333
+# overkillpp
+605561819
+# shakennotstirredpp
+1656116973
+# btra3map1 - Freak In
+1093987693
+# overice
+2174222872
+# ragera3map1
+1095052281
+
+# Leviathan & the edge
+546767437
+
+### s0cke's gun models
+# Quake Live High Polygon Guns
+1930898901
+
+### Gibs
+691078677
+
+# ra3map12
+1804860462
+
+# ra3map2
+558200805
+
+# coldwar
+543197560
+
+# ospca1
+547440173
+
+# nohalls overkill
+2888269948
+
+# tokay arena
+1205737264
+
+# AsylumPlus
+3101188892
+
+# nohalls2
+3149546769
+
+# prison
+2812274310
+
+# ts_mod1
+2892381695
+
+# ct3tourney2
+1706207251
+
+# silip
+2869523316
+
+# sanctum
+2938839334
+
+# oilrig
+655639987
+
+# brutallab
+908670670
+
+# 13soylent_a3
+3250428693
+
+# threestory
+3287090548
+
+# deck16
+1564672852
+
+# inversekill
+668999226
+
+# dm6b2r
+609946851
