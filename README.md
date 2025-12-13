@@ -2,14 +2,14 @@
 Get started writing Quake Live server plugins with Python *fast*!
 
 ### What is Vadrigar?
-Vadrigar aims to be a plug-and-play development environment for minqlx plugins and general Quake Live server configuration. Usable on both Windows and Linux.
+Vadrigar aims to be a plug-and-play development environment for [minqlx](https://github.com/MinoMino/minqlx) plugins and general Quake Live server configuration. Usable on both Windows and Linux.
 
 ### Who is this tool for?
 Quake Live players who know basic Python.
 
 ### What can it do?
 Besides a quick-deploy test server, this repo provides standard files and some handy dev tools that I use:
-- a default set of plugins from minqlx-plugins
+- a default set of plugins from [minqlx-plugins](https://github.com/MinoMino/minqlx-plugins)
 - a `devutils.py` plugin to help quickly set up bots for gameplay testing
 - a simple `server.cfg` and gamemode factories
 - a stub version of the minqlx module for LSP features in your IDE (autocomplete etc..).
@@ -60,7 +60,7 @@ sudo apt update && sudo apt upgrade
 sudo apt install git
 git clone https://github.com/thr0ned/vadrigar.git && cd vadrigar
 ```
-Run the installer script. You'll need to provide the sudo password you set before.
+Run the installer script to set up docker/compose. You'll need to provide the sudo password you set before.
 ```bash
 # Set execute permission
 chmod +x ./setup/debian-installer.sh
