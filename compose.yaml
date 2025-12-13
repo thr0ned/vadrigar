@@ -31,7 +31,7 @@ services:
       - ./volumes/qlds/baseq3/server.cfg:/qlds/baseq3/server.cfg:rw
       - ./volumes/qlds/baseq3/scripts:/qlds/baseq3/scripts:rw
       - ./volumes/qlds/baseq3/workshop.txt:/qlds/baseq3/workshop.txt:rw
-      - ./volumes/qlds/baseq3/mappool_ca_vamp.txt:/qlds/baseq3/mappool_ca_vamp.txt:rw
+      - ./volumes/qlds/baseq3/mappool_ca_vamp.txt:/qlds/baseq3/mappool.txt:rw
     environment:
       - REDIS_HOST=${REDIS_HOST}
     depends_on:
