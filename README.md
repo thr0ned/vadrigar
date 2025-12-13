@@ -29,12 +29,12 @@ On Windows, we will circumvent Windows by using the Windows Subsystem for Linux(
 First make sure your Windows is fully updated, then follow the installation guide [here](https://learn.microsoft.com/en-us/windows/wsl/install#install-wsl-command).
 
 Some tips:
-- Launch your terminals as administrator to avoid shenanigans
+- Run your terminals as administrator to avoid shenanigans
 - You will have to reboot one or more times for Windows to properly enable the virtualization features.
 
 Once WSL is installed, we need pull the debian distro.
 ``` powershell
-wsl.exe --install Debian
+wsl.exe --install debian
 ```
 You'll be prompted for a new username and password. I highly recommend setting it to `vadrigar` to avoid unforeseen conflicts.
 ```powershell
@@ -48,7 +48,7 @@ You should then be inside the debian shell, something like:
 
 To launch it manually:
 ```powershell
-wsl.exe --distribution Debian
+wsl.exe --distribution debian
 ```
 
 ### 2. Vadrigar Installation
@@ -69,5 +69,6 @@ chmod +x ./setup/debian-installer.sh
 Now exit out back to PowerShell with `exit`, then kill and restart WSL:
 ```powershell
 wsl --shutdown
-wsl.exe --distribution Debian
+wsl --distribution debian
 ```
+Finally, `cd` to the vadrigar repo folder (with the compose.yaml and Dockerfile.qlds) and let the image build by running `docker compose up`. This will take a while because docker is running steamcmd and downloading the server files from valve's repos.
